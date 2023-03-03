@@ -31,7 +31,7 @@
     <div>
         <div class="col-md-4" style="padding-top: 50px;">
         <?php
-	//rafael
+	
             ob_start();
             session_start();
             if(isset($_SESSION['user']) == ""){
