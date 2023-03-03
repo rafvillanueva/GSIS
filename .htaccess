@@ -1,0 +1,15 @@
+RewriteEngine On
+
+RewriteRule ^vineyard?$ index.php
+RewriteRule ^about-us?$ About.php
+RewriteRule ^program?$ Programs.php
+RewriteRule ^view-program?$ view-programs.php
+RewriteRule ^our-edge?$ our-edge.php
+RewriteRule ^partners?$ partners.php
+RewriteRule ^contact-us?$ contact.php
+RewriteRule ^weather-status?$ weather.php
+
+RewriteRule ^article?$ post.php
+RewriteRule ^news-and-events?$ news.php
+
+#ErrorDocument 404 http://localhost/www/phLogin.php

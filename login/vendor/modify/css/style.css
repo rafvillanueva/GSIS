@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css?family=Exo+2');
+
+.col-md-4{
+	padding-left: 0px;
+	padding-right: 0px;
+}
+.kr-login{
+	padding-top: 120px;
+}
+.kr-adlogo{
+	height: 55px;
+	width: 55px;
+}
+.kr-login-input{	
+	border-radius: 0px;
+	font-family: 'Exo 2', sans-serif;
+	letter-spacing: 1px;
+}
+.kr-login-btn{
+	font-family: 'Exo 2', sans-serif;
+	letter-spacing: 2px;
+}
+.kr-label{
+	font-family: 'Exo 2', sans-serif;
+	letter-spacing: 1px;
+	color: gray;
+}

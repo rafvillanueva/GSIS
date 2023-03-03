@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^admin-login?$ index.php
+RewriteRule ^admin-register?$ register.php
+RewriteRule ^Page-Not-Found?$ 404.php
+
+#ErrorDocument 404 404.php;

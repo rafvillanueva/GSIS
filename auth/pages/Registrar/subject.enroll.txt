@@ -1,0 +1,390 @@
+<?php
+include("../../site-config.php");
+if(isset($_GET['student'])){
+    $id = $_GET['student'];
+    $student = "SELECT * FROM tbl_students WHERE s_id = '$id'";
+    $student_query_enroll = mysqli_query($conn, $student);
+    $student_row = mysqli_fetch_array($student_query_enroll);
+
+    $course = mysqli_query($conn, "SELECT * FROM tbl_students WHERE s_id = '$id'");
+    $exe_course = mysqli_fetch_array($course);
+
+    date_default_timezone_set("Asia/Manila");
+    $date_now = date("m.d");
+    $current_year = date('Y');
+    $advance_year = date('Y') + 1;
+    $date = $current_year . "-" . $advance_year;
+    $current_month = date('m');
+
+
+    
+    if(isset($_GET['del'])){
+        $id = $_GET['enroll'];
+        $student_view = "DELETE FROM tbl_subjectsenrolled WHERE ID = '$id'";
+        mysqli_query($conn, $student_view);
+        header("location: ?student=".$_GET['student']);
+    }
+} 
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- <link rel="shortcut icon" type="image/x-icon" href="../../../images/site-content/admin/favicon.png"/> -->
+    <title>Guadalupe &#8211; Elementary School</title>
+    <link href="../../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+    <link href="../../dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="../../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="../../alert/sweetalert2.css">
+
+    <script src="../../alert/jquery2-x.js"></script>
+    <script src="../../alert/sweetalert2.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <?php 
+            include("assets/view/navbar-std-b.php"); /* Navigation */
+        ?>
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <br>
+                <div style="background-color: #e5e5e5; padding: 10px;">
+                    <a href="view-student?id=<?= $id ?>" style="text-decoration: none;">
+                        <span class="fa fa-angle-double-left"></span>
+                        <small>&nbsp; <b>Return</b> &nbsp; :: &nbsp;</small>
+                    </a>
+                    <a href="Dashboard" style="text-decoration: none;">
+                        <span class="fa fa-home"></span>
+                        <small>&nbsp; Dashboard &nbsp;</small>
+                    </a>
+                    <span class="fa fa-angle-double-right"></span>
+                    <a href="students" style="text-decoration: none;">
+                        <small>&nbsp; Students &nbsp;</small>
+                    </a>
+                    <span class="fa fa-angle-double-right"></span>
+                    <a href="view-student?id=<?= $id ?>" style="text-decoration: none;">
+                        <small>&nbsp; Student Details &nbsp;</small>
+                    </a>
+                    <span class="fa fa-angle-double-right"></span>
+                    <small>&nbsp; Add Student Subject (<b style="letter-spacing: 2px;"> <?= '#'. $student_row['s_id'] .' :: '. $student_row['s_lname'] . ' , ' . $student_row['s_fname'] . ' ' . $student_row['s_mname'] ?> </b>)&nbsp;</small>
+
+                </div>
+                <hr>
+                <div id="idsp"></div>
+                <?php 
+                if(isset($_GET['student'])){
+                    $id = $_GET['student'];
+
+                    
+                    /*echo '<a href="view-student?id='.$_GET['student'].'" class="btn btn-default" style="margin-right: 5px; margin-bottom: 10px;"><i class="fa fa-arrow-left"></i> Back</a>';*/
+                    /*echo '
+                    <h3 style="margin-top: 0px;">
+                     <b><span class="fa fa-user"></span></b> Student : <strong> #'. $student_row['Stud_id'] .' - </strong> '. $student_row['lastName'] . ' , ' . $student_row['firstName'] . ' ' . $student_row['middleName']. '.
+                    </h3>
+                    ';*/
+
+                }else{
+                    //echo '<script type="text/javascript">window.location.href = "students"</script>';
+                }
+                if(isset($_POST['btn-sub-enroll'])){
+                    date_default_timezone_set('Asia/Manila'); 
+                    $stud_id = $_GET['student'];
+                    $subCode = $_POST['enroll_sub'];
+                    $section = $_POST['section']; 
+                    $description = $_POST['enroll_des'];
+
+                    $course = mysqli_query($conn, "SELECT * FROM tbl_students WHERE s_id = '$stud_id'");
+                    $exe_course = mysqli_fetch_array($course);
+
+                    date_default_timezone_set("Asia/Manila");
+                    
+                    $dt = date("Y");
+                    $dtt = date("Y") + 1;
+
+                    $datez = $dt . "-" . $dtt;
+
+                    $enroll = "INSERT INTO tbl_subjectsEnrolled(Stud_Id,subjectCode,Section,s_year) VALUES('$stud_id','$subCode','$section','$datez')";
+                    $enroll_query = mysqli_query($conn, $enroll);
+
+                    echo '<input type="hidden" value="'.$subCode.'" id="subx">';
+                    echo '<input type="hidden" value="'.$description.'" id="desx">';
+                      ?>
+                        <script type="text/javascript">
+                            var subq = document.getElementById("subx").value;
+                            var desq = document.getElementById("desx").value;
+                            swal(
+                              'Subject Added.',
+                              '[' + subq + '] - ' + desq,
+                              'success').then(function () {                             
+                            })
+                        </script>
+                      <?php
+                }
+                ?>
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="border-radius: 0px; background-color: #474E62; color: #fff; padding-top: 0px; padding-bottom: 0px;">
+                        <form class="form-inline" autocomplete="off" method="POST" action="?student=<?php echo $id?>">
+                            <div class="form-group">
+                                <img src="assets/icons/Open_96px.png" height="55" class="imagez"> <b class="fontz" style="text-transform: uppercase; letter-spacing: 2px; font-size: 24px; position: relative; top: 5px;">List of Subjects</b>
+                            </div>
+                            <div class="form-group pull-right" style="padding: 10px; padding-right: 2px;">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search here.." name="val-search">
+                            </div>
+                            <div class="form-group">
+                               <button type="submit" name="btn-search" class="btn btn-primary ">SEARCH <i class="fa fa-search"></i></button>
+                               <a  href="#" data-toggle="modal" data-target="#subject_enrolled" class="btn btn-warning btn-md " style="font-size: 13px; letter-spacing: 1px;"><i class="fa fa-info-circle"></i> Subject Enrolled</a>
+                            </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped ">
+                                <thead>
+                                    <tr>
+                                        <th width="150">Subject Code</th>
+                                        <th>Description</th>
+                                        <th width="180">Section</th>
+                                        <th><center>Action</center></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                        $stud_id = $_GET['student'];
+                                        if(isset($_POST['btn-search'])){
+                                            $val = $_POST['val-search'];
+                                            if($course == "SHS"){
+                                                $subjects = "SELECT * FROM tbl_subjects WHERE subjectCode LIKE '%SHS%' AND (subjectCode like '%$val%' OR Description like '%$val%') ORDER BY ID DESC";
+                                                $subjects_query = mysqli_query($conn, $subjects);
+                                            }else{
+                                                $subjects = "SELECT * FROM tbl_subjects WHERE subjectCode NOT LIKE '%SHS%' AND (subjectCode like '%$val%' OR Description like '%$val%') ORDER BY ID DESC";
+                                                $subjects_query = mysqli_query($conn, $subjects);
+                                            }
+                                            while($row = mysqli_fetch_array($subjects_query)){
+                                                echo '<tr>';
+                                                echo '<td>'.$row['subjectCode'].'</td>';
+                                                echo '<td>'.$row['Description'].'</td>';
+
+                                                echo '<form action="?student='. $id .'" method="POST">';
+                                                /*echo '<td>'; */                                   
+                                                $subject = $row['subjectCode'];                                    
+                                                /*$date = date("Y");
+                                                $date1 = date("Y") + 1;*/
+                                                $sem = mysqli_query($conn, "SELECT count(*) as e FROM tbl_subjectsenrolled WHERE Stud_id = '$id' AND subjectCode = '$subject'");
+                                                $sem_row = mysqli_fetch_array($sem);
+                                                if($sem_row['e'] == 1){
+
+                                                  /*  echo '<center><h5 style="color: red;">-</h5></center>';*/
+                                                    /*if($sem_row['Semester'] == 1){
+                                                        echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="semester">';
+                                                        echo '<option>2</option>';                                             
+                                                        echo '</select>';
+                                                        echo '</td>';
+                                                    }else{
+                                                        echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="semester">';
+                                                        echo '<option>1</option>';                                            
+                                                        echo '</select>';
+                                                        echo '</td>';
+                                                    }*/
+                                                }else{
+                                                    /*$sem1 = mysqli_query($conn, "SELECT * FROM tbl_subjects WHERE subjectCode = '$subject'");
+                                                    $sem1_row = mysqli_fetch_array($sem1);
+                                                    if($sem1_row['Sem'] == 1){
+                                                        echo '<center>' . $sem1_row['Sem'] . 'ST</center>';
+                                                    }elseif($sem1_row['Sem'] == 2){
+                                                        echo '<center>' . $sem1_row['Sem'] . 'ND</center>';
+                                                    }elseif($sem1_row['Sem'] == 101){
+                                                        echo '<center>-</center>';
+                                                    }*/
+                                                    
+                                                    /*echo '<input type="hidden" value="'.$sem1_row['Sem'].'" name="semester" >';*/
+                                                    /*echo '</td>';*/
+                                                }
+                                                
+                                                if($sem_row['e'] == 1){
+                                                    echo '<td>';
+                                                    echo '<center><h5 style="color: red;">-</h5></center>';
+                                                     echo '</td>';
+                                                }else{
+                                                     echo '<td>';
+                                                    echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="section">';
+                                                        $section_select = "SELECT * FROM tbl_section ORDER BY Section ASC";
+                                                        $section_select_query = mysqli_query($conn, $section_select);
+                                                        while($select_row = mysqli_fetch_array($section_select_query)){
+                                                        echo '<option>'.$select_row['section'].'</option>';
+                                                        }
+                                                    echo '</select>';
+                                                    echo '</td>';
+                                                }
+                                               
+
+                                                echo '<td style="font-size: 11px; width: 120px;">';
+                                                $subCode = $row['subjectCode'];
+                                                $exist_sub = "SELECT count(*) as sub FROM tbl_subjectsEnrolled WHERE Stud_Id = '$stud_id' AND subjectCode = '$subCode' AND subjectCode = '$subject'";
+                                                $exist_sub_query = mysqli_query($conn, $exist_sub);
+                                                $exist_row = mysqli_fetch_array($exist_sub_query);
+                                                if($exist_row['sub'] == 0){
+                                                echo '<input type="hidden" name="enroll_sub" value="'.$row['subjectCode'].'">';
+                                                echo '<input type="hidden" name="enroll_des" value="'.$row['Description'].'">';
+                                                
+                                                echo '<center><button class="btn btn-sm btn-success btn-block" name="btn-sub-enroll"><i class="fa fa-plus"></i> Add</button></center>';
+                                                echo '</form>';                                  
+                                                }else{
+                                                    echo '<center><h5 style="color: red;">Enrolled</h5></center>';
+                                                }
+                                                echo '</td>';
+                                                echo '</tr>';
+                                            }
+                                        }else{
+                                            $subjects = "SELECT * FROM tbl_subjects ORDER BY ID DESC";
+                                            $subjects_query = mysqli_query($conn, $subjects);
+                                            while($row = mysqli_fetch_array($subjects_query)){
+                                                echo '<tr>';
+                                                echo '<td>'.$row['subjectCode'].'</td>';
+                                                echo '<td>'.$row['Description'].'</td>';
+
+                                                echo '<form action="?student='. $id .'" method="POST">';
+                                                                                  
+                                                $subject = $row['subjectCode'];                                    
+                                                /*$date = date("Y");
+                                                $date1 = date("Y") + 1;*/
+                                                $sem = mysqli_query($conn, "SELECT count(*) as e FROM tbl_subjectsenrolled WHERE Stud_id = '$id' AND subjectCode = '$subject'");
+                                                $sem_row = mysqli_fetch_array($sem);
+                                                if($sem_row['e'] == 1){
+
+                                                  /*  echo '<center><h5 style="color: red;">-</h5></center>';*/
+                                                    /*if($sem_row['Semester'] == 1){
+                                                        echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="semester">';
+                                                        echo '<option>2</option>';                                             
+                                                        echo '</select>';
+                                                        echo '</td>';
+                                                    }else{
+                                                        echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="semester">';
+                                                        echo '<option>1</option>';                                            
+                                                        echo '</select>';
+                                                        echo '</td>';
+                                                    }*/
+                                                }else{
+
+                                                    $sem1 = mysqli_query($conn, "SELECT * FROM tbl_subjects WHERE subjectCode = '$subject'");
+                                                    $sem1_row = mysqli_fetch_array($sem1);
+                                                    
+                                                }
+                                                
+                                                if($sem_row['e'] == 1){
+                                                    echo '<td>';
+                                                    echo '<center><h5 style="color: red;">-</h5></center>';
+                                                    echo '</td>';
+                                                }else{
+                                                    echo '<td>';
+                                                    echo '<select class="form-control" style="margin-bottom: 5px; font-size: 12px; font-style: bold;" required name="section">';
+                                                        $section_select = "SELECT * FROM tbl_section ORDER BY Section ASC";
+                                                        $section_select_query = mysqli_query($conn, $section_select);
+                                                        while($select_row = mysqli_fetch_array($section_select_query)){
+                                                        $sub_max = $select_row['section'];
+                                                        $rs_max = mysqli_query($conn, "SELECT * FROM tbl_subjectsenrolled WHERE subjectCode = '$subject' AND section = '$sub_max'");
+                                                        if(mysqli_num_rows($rs_max) == $select_row['max_stud']){
+                                                        echo '<option disabled>'.$select_row['section'].' (Full)</option>';
+                                                        }else{
+                                                        echo '<option>'.$select_row['section'].'</option>';
+                                                        }
+                                                        }
+                                                    echo '</select>';
+                                                    echo '</td>';
+                                                }
+                                                 $subCode = $row['subjectCode'];
+                                                $exist_sub = "SELECT count(*) as sub FROM tbl_subjectsEnrolled WHERE Stud_Id = '$stud_id' AND subjectCode = '$subCode' AND subjectCode = '$subject'";
+                                                $exist_sub_query = mysqli_query($conn, $exist_sub);
+                                                $exist_row = mysqli_fetch_array($exist_sub_query);
+                                                echo '<td style="font-size: 11px; width: 120px;">';
+                                                if($exist_row['sub'] == 0){
+                                                    echo '<input type="hidden" name="enroll_sub" value="'.$row['subjectCode'].'">';
+                                                    echo '<input type="hidden" name="enroll_des" value="'.$row['Description'].'">';
+                                                    
+                                                    /*$prereq = $row['Prerequisite'];
+                                                    $pre_sql = mysqli_query($conn, "SELECT * FROM tbl_subjectsenrolled WHERE subjectCode = '$prereq' AND stud_id = '$stud_id'");
+                                                     if($prereq == "None"){
+                                                        echo '<center><button class="btn btn-sm btn-success btn-block" name="btn-sub-enroll"><i class="fa fa-plus"></i> Add</button></center>';
+                                                     }else{
+                                                        if(mysqli_num_rows($pre_sql) > 0){
+                                                            echo '<center><button class="btn btn-sm btn-success btn-block" name="btn-sub-enroll"><i class="fa fa-plus"></i> Add</button></center>';
+                                                        }else{
+                                                            ?>
+                                                            <center><h6 style="color: orange;"><b><?= $prereq ?> <br> Required</b></h6></center>
+                                                            <?php
+                                                        }
+                                                     }*/
+                                                    echo '<center><button class="btn btn-sm btn-success btn-block" name="btn-sub-enroll"><i class="fa fa-plus"></i> Add</button></center>';
+                                                    echo '</form>';                                  
+                                                }else{
+                                                    echo '<center><h5 style="color: red;">Enrolled</h5></center>';
+                                                }
+                                                echo '</td>';
+
+                                                    
+                                                   
+
+                                                   
+
+                                                    /*$prereq = $row['Prerequisite'];
+                                                    $pre_sql = mysqli_query($conn, "SELECT * FROM tbl_subjectsenrolled WHERE subjectCode = '$prereq' AND stud_id = '$stud_id'");
+                                                    if($prereq == "None"){
+                                                        if($exist_row['sub'] == 0){
+                                                            echo '<td style="font-size: 11px; width: 120px;">';
+                                                            echo '<input type="hidden" name="enroll_sub" value="'.$row['subjectCode'].'">';
+                                                            echo '<input type="hidden" name="enroll_des" value="'.$row['Description'].'">';
+                                                            
+                                                            echo '<center><button class="btn btn-sm btn-success btn-block" name="btn-sub-enroll"><i class="fa fa-plus"></i> Add</button></center>';
+                                                            echo '</form>';                                  
+                                                        }else{
+                                                            echo '<center><h5 style="color: red;">Enrolled</h5></center>';
+                                                        }
+                                                            echo '</td>';
+                                                    }*/
+                                                    /*if(mysqli_num_rows($pre_sql) > 0){
+                                                        
+                                                        
+                                                    }else{
+                                                        ?>
+                                                        <td><center><h5 style="color: red;"><?= $prereq ?> Required</h5></center></td>
+                                                        <?php
+                                                    }*/
+                                                    echo '</tr>';
+                                            }
+                                        }
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </form>
+                
+                <div class="pagination-container">
+                    <nav>
+                        <ul class="pagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php include("assets/modal/modal.php"); ?>
+    <script src="../../vendor/jquery/jquery.min.js"></script>    
+    <script src="../../vendor/custom/tnek.js"></script>
+    <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../vendor/metisMenu/metisMenu.min.js"></script>
+    <script src="../../dist/js/sb-admin-2.js"></script>
+    <script type="text/javascript">
+            function goBack() {
+                window.history.back();
+            }
+    </script>
+</body>
+
+</html>

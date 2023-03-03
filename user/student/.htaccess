@@ -1,0 +1,12 @@
+RewriteEngine On
+RewriteRule ^Classes?$ classes.php 
+RewriteRule ^password?$ passwordSettings.php
+RewriteRule ^main?$ panel.php
+RewriteRule ^progress?$ progress.php
+RewriteRule ^grades?$ grades.php
+
+RewriteRule ^modules?$ index.php
+
+RewriteRule ^current-grades?$ current_classes.php
+
+#ErrorDocument 404 http://localhost/www/phLogin.php

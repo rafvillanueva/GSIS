@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteRule ^Log-in?$ k-login.php
+
+#ErrorDocument 404 http://localhost/www/phLogin.php

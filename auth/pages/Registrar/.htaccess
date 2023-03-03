@@ -1,0 +1,44 @@
+RewriteEngine On
+RewriteRule ^students?$ students.php
+RewriteRule ^new-student?$ students.new.php
+RewriteRule ^view-student?$ students.edit.php
+RewriteRule ^enroll-student-subject?$ subject.enroll.php
+
+RewriteRule ^accounts?$ accounts.php
+RewriteRule ^accounts-add?$ accounts.new.php
+RewriteRule ^accounts-edit?$ accounts.edit.php
+
+RewriteRule ^courses?$ course.php
+RewriteRule ^new-course?$ course.new.php
+RewriteRule ^edit-course?$ course.new.php
+
+RewriteRule ^faculty-new?$ faculty.new.php
+RewriteRule ^faculty-edit?$ faculty.new.php
+RewriteRule ^faculty-load?$ faculty.load.php
+RewriteRule ^faculty?$ faculty.php
+
+RewriteRule ^subjects?$ subjects.php
+RewriteRule ^subjects-enroll?$ subject.enroll.php
+RewriteRule ^new-subject?$ subjects.new.php
+RewriteRule ^edit-subjects?$ subjects.new.php
+
+RewriteRule ^sections?$ section.php
+RewriteRule ^edit-sections?$ section.edit.php
+RewriteRule ^new-section?$ section.edit.php
+RewriteRule ^Dashboard?$ index.php
+RewriteRule ^registrar?$ dashboard.php
+RewriteRule ^student-management?$ dashboard_1.php
+RewriteRule ^grade-view?$ gradeview.php
+RewriteRule ^school-calendar?$ schoolcalendar.php
+RewriteRule ^semester-calendar?$ semestercalendar.php
+RewriteRule ^tertiary-calendar?$ teriary.php
+RewriteRule ^shs-calendar?$ shscalendar.php
+RewriteRule ^grade-converter?$ numeric.php
+RewriteRule ^grade-management?$ student.grades.php
+RewriteRule ^student-grade-management?$ stdmanagement.php
+
+RewriteRule ^password?$ passwordSettings.php
+
+RewriteRule ^notification?$ notification.php
+
+#ErrorDocument 404 http://localhost/www/phLogin.php

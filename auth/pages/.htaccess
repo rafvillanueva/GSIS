@@ -1,0 +1,10 @@
+RewriteEngine On
+
+RewriteRule ^administrator?$ index.php
+RewriteRule ^notification?$ notification.php
+RewriteRule ^accounts?$ accounts.php
+RewriteRule ^accounts-add?$ accounts.new.php
+RewriteRule ^accounts-edit?$ accounts.edit.php
+RewriteRule ^password?$ passwordSettings.php
+
+#ErrorDocument 404 http://localhost/www/phLogin.php

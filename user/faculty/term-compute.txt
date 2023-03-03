@@ -1,0 +1,273 @@
+       ?>
+        <table id="mytable" class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <!-- <th style="width: 150px;">Student ID #</th> -->
+                    <th>Student</th>
+                    <!-- <th>Course</th> -->
+                    <th style="width: 70px;"><center>Prelim</center></th>
+                    <th style="width: 70px;"><center>Midterm</center></th>
+                    <th style="width: 100px;"><center>Semi-Finals</center></th>
+                    <th style="width: 70px;"><center>Finals</center></th>
+                    <th><center>Semestral Grade</center></th>
+                    <th><center>Numeric Grade</center></th>
+                    <th><center></center></th>
+                    <th><center></center></th>
+                </tr>                
+            </thead>
+            <tbody>
+                <?php 
+                    
+
+                    $role_rs = mysqli_query($conn, "SELECT * FROM tbl_accounts WHERE Username = '$id'");
+                    $role_row = mysqli_fetch_array($role_rs);
+                    if($role_row['Level'] == "Faculty"){
+                        $role = 0;
+                    }
+                   
+                    ?>
+                   
+                    <?php
+
+                    echo '<input value="'.$section.'" id="sectionx" type="hidden">';
+                    $query = mysqli_query($conn, "SELECT * FROM tbl_subjectsenrolled WHERE subjectCode = '$sub_id' AND Section = '$section' AND Semester = '$sem' AND Year = '$acad'");
+                    while( $rowx = mysqli_fetch_array($query)){
+                        ?>
+                        <tr>
+                            <?php 
+                                $id = $rowx['Stud_Id'];
+                                $idz = $id;
+                                $acadz = $acad;
+                                $semz = $sem;
+                                $auth_enc = hash("md5", $idz . $acadz . $semz . $role . "krc");
+                                $call_student = mysqli_query($conn, "SELECT * FROM tbl_studentrecord WHERE Stud_Id = '$id'");
+                                $rowz = mysqli_fetch_array($call_student);
+                                include("compute.php"); 
+                            ?>
+                            <!-- <td><?= $id ?></td> -->
+                            <td><?= $rowz['lastName'] . ', ' . $rowz['firstName'] . ' ' . $rowz['middleName']; ?></td>
+                            <?php
+                            $score = mysqli_query($conn, "SELECT * FROM tbl_scores WHERE Stud_id = '$id' AND SubjectCode = '$sub_id' AND Year = '$acad' AND Grade_Components = '$quiz' AND Period = '$period'");
+                            $row_score = mysqli_fetch_array($score);
+
+                            $post_grade = mysqli_query($conn, "SELECT count(*) as e FROM tbl_grades WHERE Fac_Id = '$fac_id' AND Stud_id = '$id' AND Year = '$acad' AND Sem = '$sem' AND Section = '$section' AND SubjectCode = '$sub_id'");
+                            $post_row = mysqli_fetch_array($post_grade);
+
+                            $grade = number_format((float)$final_grade, 0, '.', ',');
+                            ?>
+                               <!--  <td><?= $rowz['Course'] ?></td> -->
+                            <?php 
+                            if(number_format((float)$prelim, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$prelim, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$midterm, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$midterm, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$semiterm, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$semiterm, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$finals, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$finals, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                                 echo '<td><center>'.number_format((float)$final_grade, 2, '.', ',').'</center></td>';
+                                 echo '<td><center>'.$numeric_grade.'</center></td>';
+                                 echo '<td><center></center></td>';
+                                 ?>
+                                 <td><center><a href="../progress/?auth=<?= $auth_enc ?>&std=<?= $idz ?>&acad=<?= $acadz ?>&sem=<?= $semz ?>&r=<?= $role ?>" class="btn btn-default btn-sm"> View Progress</a></center></td>
+                                 <?php
+                            }
+
+                            if(!empty($row_score['Stud_id'])){
+                            
+                            ?>
+                            <input type="hidden" value="<?= $id ?>" name="std_id[]">
+                            <input type="hidden" value="<?= $acad ?>" name="Year[]">
+                            <input type="hidden" value="<?= $sem ?>" name="Semester[]">
+                            <input type="hidden" value="<?= $section ?>" name="Section[]">
+                            <input type="hidden" value="<?= $fac_id ?>" name="fac_id[]">
+                            <input type="hidden" value="<?= $sub_id ?>" name="SubjectCode[]">
+                            <?php
+
+
+                                }else{
+                            ?>
+                            <!-- <td><?= $rowz['Course'] ?></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td> -->
+                            
+                           
+                        </tr>
+                        <?php
+                        }
+                        $num++;
+                    }
+                    echo '<input type="hidden" value="'.$num.'" name="count">';
+                ?>
+            </tbody>
+        </table>
+        <?php
+    } else {
+         ?>
+        <table id="mytable" class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <!-- <th style="width: 150px;">Student ID #</th> -->
+                    <th>Student</th>
+                    <!-- <th>Course</th> -->
+                    <th><center>1st <sup>Grading</sup></center></th>
+                    <th><center>2nd <sup>Grading</sup></center></th>
+                    <th><center>3rd <sup>Grading</sup></center></th>
+                    <th><center>4th <sup>Grading</sup></center></th>
+                    <th><center>Semestral <sup>Grade</sup></center></th>
+                    <th><center>Numeric <sup>Grade</sup></center></th>
+                    <th><center></center></th>
+                    <th><center></center></th>
+                </tr>                
+            </thead>
+            <tbody>
+                <?php 
+                    $acad = $_POST['Acad'];
+                    $sem = $_POST['Semester'];
+                    $quiz = $_POST['Quiz'];
+                    $period = $_POST['Period'];
+                    $sub_id = $_POST['sub_id'];
+                    $section = $_POST['section'];
+                    $fac_id = $_SESSION['user'];
+                    $stud_id = $id;
+                    $num = 0;
+
+                    $role_rs = mysqli_query($conn, "SELECT * FROM tbl_accounts WHERE Username = '$id'");
+                    $role_row = mysqli_fetch_array($role_rs);
+                    if($role_row['Level'] == "Faculty"){
+                        $role = 0;
+                    }
+
+                    echo '<input value="'.$section.'" id="sectionx" type="hidden">';
+                    $query = mysqli_query($conn, "SELECT * FROM tbl_subjectsenrolled WHERE subjectCode = '$sub_id' AND Section = '$section' AND Semester = '$sem' AND Year = '$acad'");
+                    while( $rowx = mysqli_fetch_array($query)){
+                        ?>
+                        <tr>
+                            <?php 
+                                $id = $rowx['Stud_Id'];
+                                $idz = $id;
+                                $acadz = $acad;
+                                $semz = $sem;
+                                $auth_enc = hash("md5", $idz . $acadz . $semz . $role . "krc");
+                                $call_student = mysqli_query($conn, "SELECT * FROM tbl_studentrecord WHERE Stud_Id = '$id'");
+                                $rowz = mysqli_fetch_array($call_student);
+                                include("compute.php"); 
+                            ?>
+                            <!-- <td><?= $id ?></td> -->
+                            <td><?= $rowz['lastName'] . ', ' . $rowz['firstName'] . ' ' . $rowz['middleName']; ?></td>
+                            <?php
+                            $score = mysqli_query($conn, "SELECT * FROM tbl_scores WHERE Stud_id = '$id' AND SubjectCode = '$sub_id' AND Year = '$acad' AND Grade_Components = '$quiz' AND Period = '$period'");
+                            $row_score = mysqli_fetch_array($score);
+
+                            $post_grade = mysqli_query($conn, "SELECT count(*) as e FROM tbl_grades WHERE Fac_Id = '$fac_id' AND Stud_id = '$id' AND Year = '$acad' AND Sem = '$sem' AND Section = '$section' AND SubjectCode = '$sub_id'");
+                            $post_row = mysqli_fetch_array($post_grade);
+
+                            $grade = number_format((float)$final_grade, 0, '.', ',');
+                            ?>
+                                <!-- <td><?= $rowz['Course'] ?></td> -->
+                            <?php 
+                            if(number_format((float)$prelim, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$prelim, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$midterm, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$midterm, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$semiterm, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$semiterm, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                            }
+                            if(number_format((float)$finals, 0, '.', ',') != "50"){
+                                echo '<td><center>'.number_format((float)$finals, 0, '.', ',').'</center></td>';
+                            }else{
+                                 echo '<td><center>-</center></td>';
+                                 echo '<td><center>'.number_format((float)$final_grade, 2, '.', ',').'</center></td>';
+                                 echo '<td><center>'.$numeric_grade.'</center></td>';
+                                 echo '<td><center></center></td>';
+                                 ?>
+                                 <td><center><a href="../progress/?auth=<?= $auth_enc ?>&std=<?= $idz ?>&acad=<?= $acadz ?>&sem=<?= $semz ?>&r=<?= $role ?>" class="btn btn-default btn-sm"> View Progress</a></center></td>
+                                 <?php
+                            }
+
+                            if(!empty($row_score['Stud_id'])){
+                            
+
+
+
+                            /*if($grade >= 100){
+                                if($post_row['e'] == 0){
+                                echo '<td><center><input class="form-control" style="text-align: center;" name="grade[]" value="100"></center></td>';
+                                }else{
+                                echo '<td><center><input readonly class="form-control" style="text-align: center;" name="grade[]" value="100"></center></td>';
+                                }
+                                echo '<td><center>PASSED</center></td>';
+                                echo '<input type="hidden" value="PASSED" name=""Remarks[]>';
+                            }elseif($grade >= 75){
+                                if($post_row['e'] == 0){
+                                echo '<td><center>'.$grade.'</center></td>';
+                                }else{
+                                echo '<td><center>'.$grade.'</center></td>';
+                                }
+                                
+                                echo '<td><center>PASSED</center></td>';
+                                echo '<input type="hidden" value="PASSED" name="Remarks[]">';
+                            }else{
+                                if($post_row['e'] == 0){
+                                echo '<td><center>'.$prelim.'</center></td>';
+                                }else{
+                                echo '<td><center>'.$prelim.'</center></td>';
+                                }
+                                echo '<td><center>'.$midterm.'</center></td>';
+                                echo '<td><center>'.$semiterm.'</center></td>';
+                                echo '<td><center>'.$finals.'</center></td>';
+                               
+                            }*/
+                            ?>
+                            <input type="hidden" value="<?= $id ?>" name="std_id[]">
+                            <input type="hidden" value="<?= $acad ?>" name="Year[]">
+                            <input type="hidden" value="<?= $sem ?>" name="Semester[]">
+                            <input type="hidden" value="<?= $section ?>" name="Section[]">
+                            <input type="hidden" value="<?= $fac_id ?>" name="fac_id[]">
+                            <input type="hidden" value="<?= $sub_id ?>" name="SubjectCode[]">
+                            <?php
+
+
+                                }else{
+                            ?>
+                            <!-- <td><?= $rowz['Course'] ?></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td>
+                            <td><center>-</center></td> -->
+                            
+                            
+                        </tr>
+                        <?php
+                        }
+                        $num++;
+                    }
+                    echo '<input type="hidden" value="'.$num.'" name="count">';
+                ?>
+            </tbody>
+        </table>
+        <?php
+    }
+    ?>
+    <?php
